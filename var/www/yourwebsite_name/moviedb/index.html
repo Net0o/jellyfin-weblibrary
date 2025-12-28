@@ -1,0 +1,605 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Movies & Series DB</title>
+
+<link rel="icon" type="image/png" href="favicon.png">
+
+<style>
+body {
+    margin: 0;
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+    background: #0f0f0f;
+    color: #e0e0e0;
+    line-height: 1.4;
+}
+
+header {
+    position: sticky;
+    top: 0;
+    background: #141414e8;
+    backdrop-filter: blur(10px);
+    padding: 12px 16px;
+    z-index: 10;
+    box-shadow: 0 4px 16px rgba(0,0,0,0.6);
+}
+
+.search-row {
+    display: flex;
+    align-items: center;
+    gap: 20px;
+    flex-wrap: nowrap;
+}
+
+.search-wrapper {
+    position: relative;
+    flex: 0 1 350px;
+    max-width: 450px;
+}
+
+input#search {
+    width: 100%;
+    padding: 10px 36px 10px 12px;
+    font-size: 15px;
+    border-radius: 8px;
+    border: none;
+    background: #2a2a2a;
+    color: white;
+    box-sizing: border-box;
+}
+
+.clear-search-btn {
+    position: absolute;
+    right: 10px;
+    top: 50%;
+    transform: translateY(-50%);
+    background: transparent;
+    border: none;
+    color: #888;
+    font-size: 20px;
+    cursor: pointer;
+    padding: 4px;
+    display: none;
+    border-radius: 50%;
+}
+
+.clear-search-btn:hover {
+    color: white;
+    background: rgba(255,255,255,0.1);
+}
+
+.clear-search-btn.visible {
+    display: block;
+}
+
+.spacer {
+    flex: 1;
+    min-width: 40px;
+}
+
+.toggle-buttons {
+    display: flex;
+    gap: 8px;
+    flex-shrink: 0;
+    justify-content: center;
+}
+
+.toggle-buttons button {
+    padding: 8px 16px;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    background: #2a2a2a;
+    color: #ccc;
+    transition: all 0.2s;
+}
+
+.toggle-buttons button.active {
+    background: #e50914;
+    color: white;
+    font-weight: 600;
+}
+
+#controls {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 0 16px 12px;
+    color: #aaa;
+    font-size: 0.9em;
+}
+
+#alphabet {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 6px;
+    padding: 8px 16px;
+    background: #1a1a1a;
+}
+
+.alphabet-letter, .clear-filter {
+    padding: 6px 10px;
+    border-radius: 6px;
+    cursor: pointer;
+    transition: all 0.18s;
+    min-width: 28px;
+    text-align: center;
+}
+
+.alphabet-letter {
+    color: #999;
+}
+
+.alphabet-letter:hover { color: white; background: #333; }
+.alphabet-letter.active {
+    background: #e50914;
+    color: white;
+    font-weight: bold;
+}
+
+.clear-filter {
+    color: #e50914;
+    font-weight: bold;
+    background: #222;
+}
+
+.clear-filter:hover { background: #333; }
+
+.grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(158px, 1fr));
+    gap: 16px;
+    padding: 16px;
+}
+
+.card {
+    background: #1e1e1e;
+    border-radius: 10px;
+    overflow: hidden;
+    transition: transform 0.22s ease, box-shadow 0.22s ease;
+    position: relative;
+}
+
+.card:hover {
+    transform: translateY(-8px);
+    box-shadow: 0 14px 32px rgba(0,0,0,0.55);
+}
+
+.poster-container {
+    position: relative;
+    width: 100%;
+    aspect-ratio: 2 / 3;
+    background: #000;
+}
+
+.card img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+.type-badge {
+    position: absolute;
+    top: 8px;
+    left: 8px;
+    background: rgba(0,0,0,0.7);
+    color: #fff;
+    font-size: 11px;
+    font-weight: bold;
+    padding: 4px 8px;
+    border-radius: 4px;
+    z-index: 5;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+.csfd-btn {
+    position: absolute;
+    bottom: 10px;
+    right: 10px;
+    background: rgba(0,0,0,0.65);
+    border-radius: 8px;
+    padding: 6px 8px;
+    z-index: 5;
+    transition: all 0.2s ease;
+    opacity: 0.92;
+}
+
+.card:hover .csfd-btn {
+    opacity: 1;
+    background: rgba(0,0,0,0.8);
+    transform: scale(1.08);
+}
+
+.csfd-btn img {
+    height: 32px;
+    width: auto;
+    display: block;
+}
+
+.title {
+    padding: 10px 8px;
+    font-size: 0.85rem;
+    text-align: center;
+    min-height: 3.8em;
+    line-height: 1.35;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    display: -webkit-box;
+    -webkit-line-clamp: 3;
+    -webkit-box-orient: vertical;
+}
+
+.card:hover .title {
+    -webkit-line-clamp: unset;
+    overflow: visible;
+    background: #1e1e1e;
+    position: relative;
+    z-index: 2;
+}
+
+.card[title]:hover::after {
+    content: attr(title);
+    position: absolute;
+    bottom: 100%;
+    left: 50%;
+    transform: translateX(-50%);
+    background: rgba(0,0,0,0.9);
+    color: white;
+    padding: 6px 10px;
+    border-radius: 6px;
+    font-size: 0.8rem;
+    white-space: nowrap;
+    z-index: 10;
+    pointer-events: none;
+    max-width: 90vw;
+}
+
+#backToTop {
+    position: fixed;
+    bottom: 30px;
+    right: 30px;
+    background: #e50914;
+    color: white;
+    border: none;
+    border-radius: 50%;
+    width: 50px;
+    height: 50px;
+    font-size: 24px;
+    cursor: pointer;
+    opacity: 0;
+    visibility: hidden;
+    transition: all 0.3s ease;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.5);
+    z-index: 90;
+}
+
+#backToTop.visible {
+    opacity: 0.9;
+    visibility: visible;
+}
+
+#backToTop:hover {
+    opacity: 1;
+    transform: scale(1.1);
+}
+
+@media (max-width: 768px) {
+    .search-row {
+        flex-direction: column;
+        gap: 12px;
+    }
+    .search-wrapper {
+        max-width: 100%;
+    }
+    .toggle-buttons {
+        justify-content: center;
+        width: 100%;
+    }
+    .spacer {
+        display: none;
+    }
+}
+</style>
+</head>
+<body>
+
+<header>
+    <div class="search-row">
+        <div class="search-wrapper">
+            <input id="search" placeholder="Search movies or series..." autocomplete="off">
+            <button id="clearSearch" class="clear-search-btn" title="Clear search">×</button>
+        </div>
+        <div class="spacer"></div>
+        <div class="toggle-buttons">
+            <button id="moviesBtn" class="active">Movies</button>
+            <button id="seriesBtn">Series</button>
+        </div>
+    </div>
+</header>
+
+<div id="alphabet"></div>
+
+<div id="controls">
+    <span id="count">Loading...</span>
+</div>
+
+<div class="grid" id="grid"></div>
+
+<button id="backToTop" title="To Top">↑</button>
+
+<script>
+const FALLBACK_POSTER = 'https://via.placeholder.com/300x450/1a1a1a/666666?text=No+Poster';
+
+let currentType = 'Movie';
+let movies = [];
+let series = [];
+let currentLetter = null;
+
+// Only base letters (no diacritics) are shown in the alphabet now
+const BASE_ALPHABET = "ABCDEFGHIJKLMNOPQRSTUVWXYZ".split("");
+
+async function loadItems(type) {
+    try {
+        const res = await fetch(`/api/items?type=${type}`);
+        const data = await res.json();
+        return data.Items || [];
+    } catch (e) {
+        console.error(e);
+        return [];
+    }
+}
+
+async function loadAll() {
+    [movies, series] = await Promise.all([
+        loadItems("Movie"),
+        loadItems("Series")
+    ]);
+    applyFilters();
+}
+
+function getAllItems() {
+    return [...movies, ...series];
+}
+
+function getStartingLetters(items) {
+    const letters = new Set();
+    items.forEach(item => {
+        if (item.Name && item.Name.length > 0) {
+            const firstChar = item.Name.toUpperCase()[0];
+            letters.add(firstChar);
+        }
+    });
+    return letters;
+}
+
+function render(list, showTypeBadge = false) {
+    const grid = document.getElementById("grid");
+    grid.innerHTML = "";
+
+    list.forEach(item => {
+        const card = document.createElement("div");
+        card.className = "card";
+        
+        const fullTitle = item.Name + (item.ProductionYear ? ` (${item.ProductionYear})` : "");
+        card.setAttribute("title", fullTitle);
+
+        const posterContainer = document.createElement("div");
+        posterContainer.className = "poster-container";
+
+        const img = document.createElement("img");
+        img.src = `/api/image/${item.Id}/Primary`;
+        img.loading = "lazy";
+        img.onerror = () => { img.src = FALLBACK_POSTER; };
+
+        if (showTypeBadge) {
+            const badge = document.createElement("div");
+            badge.className = "type-badge";
+            badge.textContent = item.Type === 'Series' ? 'Series' : 'Movie';
+            posterContainer.appendChild(badge);
+        }
+
+        const csfd = document.createElement("a");
+        csfd.href = `https://www.csfd.sk/hladat/?q=${encodeURIComponent(item.Name)}`;
+        csfd.target = "_blank";
+        csfd.className = "csfd-btn";
+        csfd.innerHTML = '<img src="csfd-small.png" alt="ČSFD">';
+
+        posterContainer.appendChild(img);
+        posterContainer.appendChild(csfd);
+
+        const title = document.createElement("div");
+        title.className = "title";
+        title.textContent = fullTitle;
+
+        card.appendChild(posterContainer);
+        card.appendChild(title);
+        grid.appendChild(card);
+    });
+
+    document.getElementById("count").textContent = 
+        `${list.length} items`;
+}
+
+window.addEventListener('scroll', () => {
+    const btn = document.getElementById('backToTop');
+    if (window.scrollY > 400) {
+        btn.classList.add('visible');
+    } else {
+        btn.classList.remove('visible');
+    }
+});
+
+document.getElementById('backToTop').onclick = () => {
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+};
+
+function applyFilters() {
+    const searchValue = document.getElementById("search").value.trim().toLowerCase();
+    const hasSearch = searchValue.length > 0;
+    const hasLetter = !!currentLetter;
+
+    const showBadge = hasSearch || hasLetter;
+
+    let filteredList = [];
+
+    if (hasSearch || hasLetter) {
+        filteredList = getAllItems();
+    } else {
+        filteredList = currentType === 'Movie' ? movies : series;
+    }
+
+    if (currentLetter) {
+        // Mapping: base letter → possible accented versions
+        const accentMap = {
+            'A': ['A', 'Á', 'Ä'],
+            'C': ['C', 'Č'],
+            'D': ['D', 'Ď'],
+            'E': ['E', 'É'],
+            'I': ['I', 'Í'],
+            'L': ['L', 'Ĺ', 'Ľ'],
+            'N': ['N', 'Ň'],
+            'O': ['O', 'Ó', 'Ô'],
+            'R': ['R', 'Ŕ'],
+            'S': ['S', 'Š'],
+            'T': ['T', 'Ť'],
+            'U': ['U', 'Ú'],
+            'Y': ['Y', 'Ý'],
+            'Z': ['Z', 'Ž']
+        };
+
+        // Get all possible starting letters for the selected base
+        const possibleStarts = accentMap[currentLetter] || [currentLetter];
+
+        filteredList = filteredList.filter(item => {
+            if (!item.Name || item.Name.length === 0) return false;
+            const titleStart = item.Name.toUpperCase()[0];
+            return possibleStarts.includes(titleStart);
+        });
+    }
+
+    if (hasSearch) {
+        filteredList = filteredList.filter(i => 
+            i.Name?.toLowerCase?.()?.includes(searchValue)
+        );
+    }
+
+    render(filteredList, showBadge);
+}
+
+const searchInput = document.getElementById("search");
+const clearSearchBtn = document.getElementById("clearSearch");
+
+searchInput.addEventListener("input", () => {
+    clearSearchBtn.classList.toggle("visible", searchInput.value.trim().length > 0);
+    applyFilters();
+});
+
+clearSearchBtn.onclick = () => {
+    searchInput.value = "";
+    clearSearchBtn.classList.remove("visible");
+    applyFilters();
+    searchInput.focus();
+};
+
+const alphabetDiv = document.getElementById("alphabet");
+const clearBtn = document.createElement("span");
+clearBtn.className = "clear-filter";
+clearBtn.textContent = "× Clear";
+clearBtn.onclick = () => {
+    currentLetter = null;
+    updateAlphabetUI();
+    applyFilters();
+};
+alphabetDiv.appendChild(clearBtn);
+
+function createAlphabet() {
+    const allItems = getAllItems();
+    const existingLetters = getStartingLetters(allItems);
+
+    // Only show base letters (no diacritics)
+    BASE_ALPHABET.forEach(letter => {
+        // Check if any title starts with this letter OR any of its accented variants
+        const hasBaseOrAccented = [...existingLetters].some(start => {
+            const accents = {
+                'A': ['Á', 'Ä'],
+                'C': ['Č'],
+                'D': ['Ď'],
+                'E': ['É'],
+                'I': ['Í'],
+                'L': ['Ĺ', 'Ľ'],
+                'N': ['Ň'],
+                'O': ['Ó', 'Ô'],
+                'R': ['Ŕ'],
+                'S': ['Š'],
+                'T': ['Ť'],
+                'U': ['Ú'],
+                'Y': ['Ý'],
+                'Z': ['Ž']
+            }[letter] || [];
+
+            return start === letter || accents.includes(start);
+        });
+
+        if (hasBaseOrAccented) {
+            const el = document.createElement("span");
+            el.className = "alphabet-letter";
+            el.textContent = letter;
+            el.dataset.letter = letter;
+            el.onclick = () => {
+                currentLetter = letter;
+                updateAlphabetUI();
+                applyFilters();
+            };
+            alphabetDiv.appendChild(el);
+        }
+    });
+}
+
+function updateAlphabetUI() {
+    document.querySelectorAll('.alphabet-letter').forEach(el => {
+        el.classList.toggle('active', el.dataset.letter === currentLetter);
+    });
+    clearBtn.style.display = currentLetter ? 'inline-block' : 'none';
+}
+
+document.getElementById("moviesBtn").onclick = () => {
+    currentType = 'Movie';
+    document.getElementById("moviesBtn").classList.add("active");
+    document.getElementById("seriesBtn").classList.remove("active");
+    currentLetter = null;
+    searchInput.value = "";
+    clearSearchBtn.classList.remove("visible");
+    updateAlphabetUI();
+    applyFilters();
+};
+
+document.getElementById("seriesBtn").onclick = () => {
+    currentType = 'Series';
+    document.getElementById("seriesBtn").classList.add("active");
+    document.getElementById("moviesBtn").classList.remove("active");
+    currentLetter = null;
+    searchInput.value = "";
+    clearSearchBtn.classList.remove("visible");
+    updateAlphabetUI();
+    applyFilters();
+};
+
+async function loadAll() {
+    [movies, series] = await Promise.all([
+        loadItems("Movie"),
+        loadItems("Series")
+    ]);
+    applyFilters();
+}
+
+loadAll().then(() => {
+    createAlphabet();
+    updateAlphabetUI();
+});
+</script>
+</body>
+</html>
