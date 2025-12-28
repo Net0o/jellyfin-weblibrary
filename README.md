@@ -5,13 +5,14 @@ Jellyfin-weblibrary is using jellyfin API key which must be set along with the i
 
 
 1. Backend configuration (.env)
+
 download the files, put in respective folders and modify the .env file
 nano /home/dietpi/jellyfin-libr-backend/.env
 
-2. Install dependencies (once)
+3. Install dependencies (once)
 npm install
 
-3. Test backend manually
+4. Test backend manually
 node server.js
 You should see something like:
 Jellyfin backend running on port 3002
