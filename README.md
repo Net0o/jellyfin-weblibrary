@@ -45,7 +45,7 @@ Paste:
 
 <h6>[Unit]
 
-Description=Jellyfin Movie Backend
+Description=Jellyfin MovieDB Backend
 
 After=network.target
 
