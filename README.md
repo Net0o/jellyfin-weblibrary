@@ -1,16 +1,17 @@
 # jellyfin-weblibrary
+<h1><b>Website based library of your Jellyfin Movies / Series / New cards</b></h1>
 
 <img width="1458" height="823" alt="image" src="https://github.com/user-attachments/assets/5fac61af-2722-48a4-a89d-4d85015b8278" />
 
+<h2>Comes with alphabetical search / search field / genre selection</h2>
 
-Website based library of your jellyfin movies / series, just to check, what you already have.
+Jellyfin-weblibrary is using Jellyfin & IMDB API key which you have to enter in the .env file
 
-Jellyfin-weblibrary is using jellyfin API key which must be set along with the instance in the .env file
+<h3>Configuration steps:</h3>
 
+<h5>1. Backend configuration (.env)
 
-1. Backend configuration (.env)
-
-download the files, put in respective folders and modify the .env file
+download all files, put them in respective folders and modify the .env file
 
 nano /home/dietpi/jellyfin-libr-backend/.env
 
@@ -23,12 +24,11 @@ npm install
 node server.js
 
 You should see something like:
-
 Jellyfin backend running on port 3002
 
 Test in browser:
 
-http://localhost:3002/api/movies
+http://hostip:3002/api/items
 
 If you see JSON → backend works ✅
 
@@ -43,7 +43,7 @@ sudo nano /etc/systemd/system/jellyfin-moviedb.service
 
 Paste:
 
-[Unit]
+<h6>[Unit]
 
 Description=Jellyfin Movie Backend
 
@@ -53,9 +53,9 @@ After=network.target
 
 Type=simple
 
-User=dietpi
+User=username
 
-WorkingDirectory=/home/dietpi/jellyfin-libr-backend
+WorkingDirectory=/home/username/jellyfin-libr-backend
 
 ExecStart=/usr/bin/node server.js
 
@@ -66,8 +66,7 @@ Environment=NODE_ENV=production
 
 [Install]
 
-WantedBy=multi-user.target
-
+WantedBy=multi-user.target </h6>
 
 5. Enable & start:
 
@@ -84,7 +83,5 @@ Check:
 sudo systemctl status jellyfin-moviedb
 
 6. Access the site ✅
-   
 Open in browser:
-
-http://YOUR_SERVER_IP/moviedb/
+http://YOUR_SERVER_IP/moviedb/ </h5>
