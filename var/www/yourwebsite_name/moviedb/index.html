@@ -4,9 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Movies & Series DB</title>
-
 <link rel="icon" type="image/png" href="favicon.png">
-
 <style>
 body {
     margin: 0;
@@ -15,7 +13,6 @@ body {
     color: #e0e0e0;
     line-height: 1.4;
 }
-
 header {
     position: sticky;
     top: 0;
@@ -25,20 +22,17 @@ header {
     z-index: 10;
     box-shadow: 0 4px 16px rgba(0,0,0,0.6);
 }
-
 .search-row {
     display: flex;
+    flex-direction: column;
     align-items: center;
-    gap: 20px;
-    flex-wrap: nowrap;
+    gap: 4px;
 }
-
 .search-wrapper {
     position: relative;
-    flex: 0 1 350px;
+    width: 100%;
     max-width: 450px;
 }
-
 input#search {
     width: 100%;
     padding: 10px 36px 10px 12px;
@@ -49,7 +43,6 @@ input#search {
     color: white;
     box-sizing: border-box;
 }
-
 .clear-search-btn {
     position: absolute;
     right: 10px;
@@ -64,28 +57,18 @@ input#search {
     display: none;
     border-radius: 50%;
 }
-
 .clear-search-btn:hover {
     color: white;
     background: rgba(255,255,255,0.1);
 }
-
 .clear-search-btn.visible {
     display: block;
 }
-
-.spacer {
-    flex: 1;
-    min-width: 40px;
-}
-
 .toggle-buttons {
     display: flex;
     gap: 8px;
-    flex-shrink: 0;
     justify-content: center;
 }
-
 .toggle-buttons button {
     padding: 8px 16px;
     border: none;
@@ -95,13 +78,25 @@ input#search {
     color: #ccc;
     transition: all 0.2s;
 }
-
 .toggle-buttons button.active {
     background: #e50914;
     color: white;
     font-weight: 600;
 }
-
+#genreSelect {
+    padding: 8px 12px;
+    font-size: 14px;
+    border-radius: 8px;
+    border: none;
+    background: #2a2a2a;
+    color: #e0e0e0;
+    max-width: 300px;
+    cursor: pointer;
+}
+#genreSelect option {
+    background: #1e1e1e;
+    color: #e0e0e0;
+}
 #controls {
     display: flex;
     justify-content: space-between;
@@ -110,7 +105,6 @@ input#search {
     color: #aaa;
     font-size: 0.9em;
 }
-
 #alphabet {
     display: flex;
     flex-wrap: wrap;
@@ -119,7 +113,6 @@ input#search {
     padding: 8px 16px;
     background: #1a1a1a;
 }
-
 .alphabet-letter, .clear-filter {
     padding: 6px 10px;
     border-radius: 6px;
@@ -128,33 +121,27 @@ input#search {
     min-width: 28px;
     text-align: center;
 }
-
 .alphabet-letter {
     color: #999;
 }
-
 .alphabet-letter:hover { color: white; background: #333; }
 .alphabet-letter.active {
     background: #e50914;
     color: white;
     font-weight: bold;
 }
-
 .clear-filter {
     color: #e50914;
     font-weight: bold;
     background: #222;
 }
-
 .clear-filter:hover { background: #333; }
-
 .grid {
     display: grid;
     grid-template-columns: repeat(auto-fill, minmax(158px, 1fr));
     gap: 16px;
     padding: 16px;
 }
-
 .card {
     background: #1e1e1e;
     border-radius: 10px;
@@ -162,25 +149,23 @@ input#search {
     transition: transform 0.22s ease, box-shadow 0.22s ease;
     position: relative;
 }
-
 .card:hover {
     transform: translateY(-8px);
     box-shadow: 0 14px 32px rgba(0,0,0,0.55);
 }
-
 .poster-container {
     position: relative;
     width: 100%;
     aspect-ratio: 2 / 3;
     background: #000;
 }
-
 .card img {
     width: 100%;
     height: 100%;
     object-fit: cover;
+    background: #000;
+    display: block;
 }
-
 .type-badge {
     position: absolute;
     top: 8px;
@@ -195,31 +180,48 @@ input#search {
     text-transform: uppercase;
     letter-spacing: 0.5px;
 }
-
 .csfd-btn {
     position: absolute;
     bottom: 10px;
     right: 10px;
     background: rgba(0,0,0,0.65);
     border-radius: 8px;
-    padding: 6px 8px;
+    padding: 5px 7px;
     z-index: 5;
     transition: all 0.2s ease;
     opacity: 0.92;
 }
-
 .card:hover .csfd-btn {
     opacity: 1;
     background: rgba(0,0,0,0.8);
     transform: scale(1.08);
 }
-
 .csfd-btn img {
-    height: 32px;
+    height: 26px;
     width: auto;
     display: block;
 }
-
+.imdb-btn {
+    position: absolute;
+    bottom: 10px;
+    left: 10px;
+    background: rgba(0,0,0,0.65);
+    border-radius: 8px;
+    padding: 5px 8px;
+    z-index: 5;
+    transition: all 0.2s ease;
+    opacity: 0.92;
+}
+.card:hover .imdb-btn {
+    opacity: 1;
+    background: rgba(0,0,0,0.8);
+    transform: scale(1.08);
+}
+.imdb-btn img {
+    height: 26px;
+    width: auto;
+    display: block;
+}
 .title {
     padding: 10px 8px;
     font-size: 0.85rem;
@@ -232,7 +234,6 @@ input#search {
     -webkit-line-clamp: 3;
     -webkit-box-orient: vertical;
 }
-
 .card:hover .title {
     -webkit-line-clamp: unset;
     overflow: visible;
@@ -240,7 +241,6 @@ input#search {
     position: relative;
     z-index: 2;
 }
-
 .card[title]:hover::after {
     content: attr(title);
     position: absolute;
@@ -257,7 +257,6 @@ input#search {
     pointer-events: none;
     max-width: 90vw;
 }
-
 #backToTop {
     position: fixed;
     bottom: 30px;
@@ -276,32 +275,13 @@ input#search {
     box-shadow: 0 4px 12px rgba(0,0,0,0.5);
     z-index: 90;
 }
-
 #backToTop.visible {
     opacity: 0.9;
     visibility: visible;
 }
-
 #backToTop:hover {
     opacity: 1;
     transform: scale(1.1);
-}
-
-@media (max-width: 768px) {
-    .search-row {
-        flex-direction: column;
-        gap: 12px;
-    }
-    .search-wrapper {
-        max-width: 100%;
-    }
-    .toggle-buttons {
-        justify-content: center;
-        width: 100%;
-    }
-    .spacer {
-        display: none;
-    }
 }
 </style>
 </head>
@@ -313,11 +293,14 @@ input#search {
             <input id="search" placeholder="Search movies or series..." autocomplete="off">
             <button id="clearSearch" class="clear-search-btn" title="Clear search">×</button>
         </div>
-        <div class="spacer"></div>
         <div class="toggle-buttons">
             <button id="moviesBtn" class="active">Movies</button>
             <button id="seriesBtn">Series</button>
+            <button id="newBtn">New</button>
         </div>
+        <select id="genreSelect">
+            <option value="">All Genres</option>
+        </select>
     </div>
 </header>
 
@@ -332,19 +315,31 @@ input#search {
 <button id="backToTop" title="To Top">↑</button>
 
 <script>
-const FALLBACK_POSTER = 'https://via.placeholder.com/300x450/1a1a1a/666666?text=No+Poster';
-
-let currentType = 'Movie';
+const FALLBACK_POSTER = 'no-poster.jpg';
+let currentView = 'movies'; // 'movies' | 'series' | 'new'
+let currentGenre = '';
 let movies = [];
 let series = [];
 let currentLetter = null;
-
-// Only base letters (no diacritics) are shown in the alphabet now
 const BASE_ALPHABET = "ABCDEFGHIJKLMNOPQRSTUVWXYZ".split("");
+const NEW_DAYS_THRESHOLD = 21;
+const NEW_BADGE_TEXT = "NEW";
 
-async function loadItems(type) {
+function isNewItem(item) {
+    if (!item.DateCreated) return false;
+    const addedDate = new Date(item.DateCreated);
+    const now = new Date();
+    const diffDays = (now - addedDate) / (1000 * 60 * 60 * 24);
+    return diffDays <= NEW_DAYS_THRESHOLD;
+}
+
+async function loadItems(type, genre = '') {
     try {
-        const res = await fetch(`/api/items?type=${type}`);
+        let url = `/api/items?type=${type}`;
+        if (genre) {
+            url += `&Genres=${encodeURIComponent(genre)}`;
+        }
+        const res = await fetch(url);
         const data = await res.json();
         return data.Items || [];
     } catch (e) {
@@ -353,10 +348,44 @@ async function loadItems(type) {
     }
 }
 
+async function loadGenres(type) {
+    try {
+        const res = await fetch(`/api/genres?type=${type}`);
+        const data = await res.json();
+        return data.genres || [];
+    } catch (e) {
+        console.error('Failed to load genres:', e);
+        return [];
+    }
+}
+
+async function populateGenreSelect() {
+    const select = document.getElementById('genreSelect');
+    select.innerHTML = '<option value="">All Genres</option>';
+    let genres = [];
+    if (currentView === 'new') {
+        const [movieGenres, seriesGenres] = await Promise.all([
+            loadGenres('Movie'),
+            loadGenres('Series')
+        ]);
+        genres = [...new Set([...movieGenres, ...seriesGenres])].sort((a,b) => a.localeCompare(b));
+    } else {
+        const type = currentView === 'movies' ? 'Movie' : 'Series';
+        genres = await loadGenres(type);
+    }
+    genres.forEach(g => {
+        const opt = document.createElement('option');
+        opt.value = g;
+        opt.textContent = g;
+        select.appendChild(opt);
+    });
+    select.value = currentGenre;
+}
+
 async function loadAll() {
     [movies, series] = await Promise.all([
-        loadItems("Movie"),
-        loadItems("Series")
+        loadItems("Movie", currentGenre),
+        loadItems("Series", currentGenre)
     ]);
     applyFilters();
 }
@@ -379,11 +408,9 @@ function getStartingLetters(items) {
 function render(list, showTypeBadge = false) {
     const grid = document.getElementById("grid");
     grid.innerHTML = "";
-
     list.forEach(item => {
         const card = document.createElement("div");
         card.className = "card";
-        
         const fullTitle = item.Name + (item.ProductionYear ? ` (${item.ProductionYear})` : "");
         card.setAttribute("title", fullTitle);
 
@@ -392,8 +419,12 @@ function render(list, showTypeBadge = false) {
 
         const img = document.createElement("img");
         img.src = `/api/image/${item.Id}/Primary`;
+        img.alt = "";
         img.loading = "lazy";
-        img.onerror = () => { img.src = FALLBACK_POSTER; };
+        img.onerror = () => {
+            img.onerror = null;
+            img.src = FALLBACK_POSTER;
+        };
 
         if (showTypeBadge) {
             const badge = document.createElement("div");
@@ -401,6 +432,27 @@ function render(list, showTypeBadge = false) {
             badge.textContent = item.Type === 'Series' ? 'Series' : 'Movie';
             posterContainer.appendChild(badge);
         }
+
+        if (isNewItem(item)) {
+            const newBadge = document.createElement("div");
+            newBadge.className = "type-badge";
+            newBadge.textContent = NEW_BADGE_TEXT;
+            newBadge.style.position = "absolute";
+            newBadge.style.top = "8px";
+            newBadge.style.right = "8px";
+            newBadge.style.left = "auto";
+            newBadge.style.background = "#e50914";
+            newBadge.style.color = "white";
+            newBadge.style.fontWeight = "bold";
+            posterContainer.appendChild(newBadge);
+        }
+
+        const imdb = document.createElement("a");
+        imdb.href = `https://www.imdb.com/find/?q=${encodeURIComponent(item.Name)}`;
+        imdb.target = "_blank";
+        imdb.className = "imdb-btn";
+        imdb.innerHTML = '<img src="imdb-small.png" alt="IMDb">';
+        posterContainer.appendChild(imdb);
 
         const csfd = document.createElement("a");
         csfd.href = `https://www.csfd.sk/hladat/?q=${encodeURIComponent(item.Name)}`;
@@ -419,9 +471,7 @@ function render(list, showTypeBadge = false) {
         card.appendChild(title);
         grid.appendChild(card);
     });
-
-    document.getElementById("count").textContent = 
-        `${list.length} items`;
+    document.getElementById("count").textContent = `${list.length} items`;
 }
 
 window.addEventListener('scroll', () => {
@@ -441,19 +491,24 @@ function applyFilters() {
     const searchValue = document.getElementById("search").value.trim().toLowerCase();
     const hasSearch = searchValue.length > 0;
     const hasLetter = !!currentLetter;
+    const hasGenre = !!currentGenre;
 
-    const showBadge = hasSearch || hasLetter;
-
-    let filteredList = [];
-
-    if (hasSearch || hasLetter) {
-        filteredList = getAllItems();
-    } else {
-        filteredList = currentType === 'Movie' ? movies : series;
+    let list = [];
+    if (currentView === 'movies') {
+        list = movies;
+    } else if (currentView === 'series') {
+        list = series;
+    } else if (currentView === 'new') {
+        list = getAllItems()
+            .filter(isNewItem)
+            .sort((a, b) => {
+                const nameA = (a.SortName || a.Name || '').toUpperCase();
+                const nameB = (b.SortName || b.Name || '').toUpperCase();
+                return nameA.localeCompare(nameB);
+            });
     }
 
     if (currentLetter) {
-        // Mapping: base letter → possible accented versions
         const accentMap = {
             'A': ['A', 'Á', 'Ä'],
             'C': ['C', 'Č'],
@@ -463,18 +518,15 @@ function applyFilters() {
             'L': ['L', 'Ĺ', 'Ľ'],
             'N': ['N', 'Ň'],
             'O': ['O', 'Ó', 'Ô'],
-            'R': ['R', 'Ŕ'],
+            'R': ['R', 'Ř'],
             'S': ['S', 'Š'],
             'T': ['T', 'Ť'],
             'U': ['U', 'Ú'],
             'Y': ['Y', 'Ý'],
             'Z': ['Z', 'Ž']
         };
-
-        // Get all possible starting letters for the selected base
         const possibleStarts = accentMap[currentLetter] || [currentLetter];
-
-        filteredList = filteredList.filter(item => {
+        list = list.filter(item => {
             if (!item.Name || item.Name.length === 0) return false;
             const titleStart = item.Name.toUpperCase()[0];
             return possibleStarts.includes(titleStart);
@@ -482,12 +534,15 @@ function applyFilters() {
     }
 
     if (hasSearch) {
-        filteredList = filteredList.filter(i => 
+        list = list.filter(i =>
             i.Name?.toLowerCase?.()?.includes(searchValue)
         );
     }
 
-    render(filteredList, showBadge);
+    const showTypeBadge = hasSearch || hasLetter || currentView === 'new' ||
+                         (hasGenre && !hasSearch && !hasLetter);
+
+    render(list, showTypeBadge);
 }
 
 const searchInput = document.getElementById("search");
@@ -505,6 +560,12 @@ clearSearchBtn.onclick = () => {
     searchInput.focus();
 };
 
+const genreSelect = document.getElementById("genreSelect");
+genreSelect.addEventListener("change", () => {
+    currentGenre = genreSelect.value;
+    loadAll();
+});
+
 const alphabetDiv = document.getElementById("alphabet");
 const clearBtn = document.createElement("span");
 clearBtn.className = "clear-filter";
@@ -519,10 +580,7 @@ alphabetDiv.appendChild(clearBtn);
 function createAlphabet() {
     const allItems = getAllItems();
     const existingLetters = getStartingLetters(allItems);
-
-    // Only show base letters (no diacritics)
     BASE_ALPHABET.forEach(letter => {
-        // Check if any title starts with this letter OR any of its accented variants
         const hasBaseOrAccented = [...existingLetters].some(start => {
             const accents = {
                 'A': ['Á', 'Ä'],
@@ -533,17 +591,15 @@ function createAlphabet() {
                 'L': ['Ĺ', 'Ľ'],
                 'N': ['Ň'],
                 'O': ['Ó', 'Ô'],
-                'R': ['Ŕ'],
+                'R': ['Ř'],
                 'S': ['Š'],
                 'T': ['Ť'],
                 'U': ['Ú'],
                 'Y': ['Ý'],
                 'Z': ['Ž']
             }[letter] || [];
-
             return start === letter || accents.includes(start);
         });
-
         if (hasBaseOrAccented) {
             const el = document.createElement("span");
             el.className = "alphabet-letter";
@@ -566,39 +622,55 @@ function updateAlphabetUI() {
     clearBtn.style.display = currentLetter ? 'inline-block' : 'none';
 }
 
-document.getElementById("moviesBtn").onclick = () => {
-    currentType = 'Movie';
-    document.getElementById("moviesBtn").classList.add("active");
-    document.getElementById("seriesBtn").classList.remove("active");
-    currentLetter = null;
-    searchInput.value = "";
-    clearSearchBtn.classList.remove("visible");
-    updateAlphabetUI();
-    applyFilters();
-};
+const moviesBtn = document.getElementById("moviesBtn");
+const seriesBtn = document.getElementById("seriesBtn");
+const newBtn    = document.getElementById("newBtn");
 
-document.getElementById("seriesBtn").onclick = () => {
-    currentType = 'Series';
-    document.getElementById("seriesBtn").classList.add("active");
-    document.getElementById("moviesBtn").classList.remove("active");
-    currentLetter = null;
-    searchInput.value = "";
-    clearSearchBtn.classList.remove("visible");
-    updateAlphabetUI();
-    applyFilters();
-};
-
-async function loadAll() {
-    [movies, series] = await Promise.all([
-        loadItems("Movie"),
-        loadItems("Series")
-    ]);
-    applyFilters();
+function setActiveButton(btn) {
+    moviesBtn.classList.remove("active");
+    seriesBtn.classList.remove("active");
+    newBtn.classList.remove("active");
+    btn.classList.add("active");
 }
+
+moviesBtn.onclick = () => {
+    currentView = 'movies';
+    setActiveButton(moviesBtn);
+    currentLetter = null;
+    searchInput.value = "";
+    clearSearchBtn.classList.remove("visible");
+    updateAlphabetUI();
+    populateGenreSelect();
+    loadAll();
+};
+
+seriesBtn.onclick = () => {
+    currentView = 'series';
+    setActiveButton(seriesBtn);
+    currentLetter = null;
+    searchInput.value = "";
+    clearSearchBtn.classList.remove("visible");
+    updateAlphabetUI();
+    populateGenreSelect();
+    loadAll();
+};
+
+newBtn.onclick = () => {
+    currentView = 'new';
+    setActiveButton(newBtn);
+    currentLetter = null;
+    searchInput.value = "";
+    clearSearchBtn.classList.remove("visible");
+    updateAlphabetUI();
+    populateGenreSelect();
+    loadAll();
+};
 
 loadAll().then(() => {
     createAlphabet();
     updateAlphabetUI();
+    populateGenreSelect();
+    applyFilters();
 });
 </script>
 </body>
