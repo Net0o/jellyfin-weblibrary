@@ -1,4 +1,8 @@
 # jellyfin-weblibrary
+
+<img width="1458" height="823" alt="image" src="https://github.com/user-attachments/assets/5fac61af-2722-48a4-a89d-4d85015b8278" />
+
+
 Website based library of your jellyfin movies / series, just to check, what you already have.
 
 Jellyfin-weblibrary is using jellyfin API key which must be set along with the instance in the .env file
