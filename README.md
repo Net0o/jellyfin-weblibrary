@@ -51,15 +51,13 @@ After=network.target
 
 [Service]
 
-Type=simple
-
-User=username
+ExecStart=/usr/local/bin/node /home/username/jellyfin-libr-backend/server.js
 
 WorkingDirectory=/home/username/jellyfin-libr-backend
 
-ExecStart=/usr/bin/node server.js
-
 Restart=always
+
+User=username
 
 Environment=NODE_ENV=production
 
