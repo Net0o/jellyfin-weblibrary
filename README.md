@@ -13,7 +13,7 @@ Jellyfin-weblibrary is using Jellyfin & IMDB API key which you have to enter in 
 
 download all files, put them in respective folders and modify the .env file
 
-nano /home/dietpi/jellyfin-libr-backend/.env
+nano /home/username/jellyfin-libr-backend/.env
 
 2. Install dependencies (once)
 
