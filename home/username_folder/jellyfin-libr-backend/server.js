@@ -1,140 +1,265 @@
 require('dotenv').config();
+
 const express = require('express');
 const fetch = require('node-fetch');
 const cors = require('cors');
+
 const app = express();
 const PORT = 3002;
 
 // Jellyfin configuration
-const JELLYFIN_URL = 'http://192.168.0.36:8097';
+const JELLYFIN_URL = (process.env.JELLYFIN_URL || 'http://192.168.0.36:8097').replace(/\/+$/, '');
 const API_KEY = process.env.JELLYFIN_API_KEY;
+
+// Jellyfin 12 authentication
+const JELLYFIN_HEADERS = {
+    'Authorization': `MediaBrowser Token="${API_KEY}"`,
+    'Accept': 'application/json'
+};
 
 app.use(cors());
 app.use(express.json());
 
-// Optional: serve static files if you have any (logo, css, etc.)
-// app.use(express.static('public'));
+if (!API_KEY) {
+    console.error('ERROR: JELLYFIN_API_KEY is not set in .env');
+}
 
 /**
- * Get movies or series
- * Example: /api/items?type=Movie
- * Supports additional Jellyfin query params like Genres=Action,Adventure
+ * Generic Jellyfin request helper
+ */
+async function jellyfinFetch(path, options = {}) {
+    const url = `${JELLYFIN_URL}${path}`;
+
+    console.log(`Jellyfin request: ${options.method || 'GET'} ${url}`);
+
+    const response = await fetch(url, {
+        ...options,
+        headers: {
+            ...JELLYFIN_HEADERS,
+            ...(options.headers || {})
+        }
+    });
+
+    if (!response.ok) {
+        const text = await response.text();
+
+        console.error(
+            `Jellyfin API error ${response.status}:`,
+            text
+        );
+
+        const error = new Error(
+            `Jellyfin returned HTTP ${response.status}`
+        );
+
+        error.status = response.status;
+        error.body = text;
+
+        throw error;
+    }
+
+    return response;
+}
+
+
+/**
+ * GET /api/items
+ *
+ * Example:
+ *   /api/items?type=Movie
+ *   /api/items?type=Series
+ *   /api/items?type=Movie&Genres=Action
  */
 app.get('/api/items', async (req, res) => {
     try {
         const type = req.query.type || 'Movie';
-        const params = new URLSearchParams(req.query);
 
-        // Ensure required params are set
+        const params = new URLSearchParams();
+
+        // Copy frontend supplied query parameters.
+        for (const [key, value] of Object.entries(req.query)) {
+            if (key !== 'type') {
+                params.set(key, value);
+            }
+        }
+
         if (!params.has('IncludeItemTypes')) {
             params.set('IncludeItemTypes', type);
         }
+
         if (!params.has('Recursive')) {
             params.set('Recursive', 'true');
         }
+
         if (!params.has('SortBy')) {
             params.set('SortBy', 'SortName');
         }
 
-        // Force include DateCreated (needed for "NEW" badge) and ProductionYear (already used)
-        let fields = params.get('Fields') || '';
-        const requiredFields = 'DateCreated,ProductionYear';
-        if (!fields.includes('DateCreated')) {
-            fields = fields ? `${fields},${requiredFields}` : requiredFields;
+        if (!params.has('SortOrder')) {
+            params.set('SortOrder', 'Ascending');
         }
-        params.set('Fields', fields);
 
-        const url = `${JELLYFIN_URL}/Items?${params.toString()}`;
+        // Fields required by the frontend.
+        const requiredFields = [
+            'DateCreated',
+            'ProductionYear',
+            'ProviderIds',
+            'ImageTags'
+        ];
 
-        const response = await fetch(url, {
-            headers: { 'X-Emby-Token': API_KEY }
-        });
+        const existingFields = params.get('Fields')
+            ? params.get('Fields')
+                .split(',')
+                .map(x => x.trim())
+                .filter(Boolean)
+            : [];
 
-        if (!response.ok) {
-            const text = await response.text();
-            console.error('Items fetch error:', response.status, text);
-            return res.status(response.status).send(text);
+        for (const field of requiredFields) {
+            if (!existingFields.includes(field)) {
+                existingFields.push(field);
+            }
         }
+
+        params.set('Fields', existingFields.join(','));
+
+        const response = await jellyfinFetch(
+            `/Items?${params.toString()}`
+        );
 
         const data = await response.json();
+
         res.json(data);
+
     } catch (err) {
         console.error('Items error:', err);
-        res.status(500).send('Backend error');
+
+        res.status(err.status || 500).json({
+            error: 'Failed to fetch items from Jellyfin',
+            status: err.status || 500,
+            details: err.body || err.message
+        });
     }
 });
 
+
 /**
- * NEW: Get available genres for a given type (Movie / Series)
- * Example: /api/genres?type=Movie
+ * GET /api/genres
+ *
+ * Example:
+ *   /api/genres?type=Movie
+ *   /api/genres?type=Series
  */
 app.get('/api/genres', async (req, res) => {
     try {
         const type = req.query.type || 'Movie';
 
-        const url = `${JELLYFIN_URL}/Genres?` + new URLSearchParams({
+        /*
+         * Jellyfin still exposes GET /Genres in the current API.
+         * We ask Jellyfin for the requested item type.
+         */
+        const params = new URLSearchParams({
             IncludeItemTypes: type,
-            Recursive: true
-        }).toString();
-
-        const response = await fetch(url, {
-            headers: { 'X-Emby-Token': API_KEY }
+            Recursive: 'true',
+            SortBy: 'SortName',
+            SortOrder: 'Ascending'
         });
 
-        if (!response.ok) {
-            const text = await response.text();
-            console.error('Genres fetch error:', response.status, text);
-            return res.status(response.status).send(text);
-        }
+        const response = await jellyfinFetch(
+            `/Genres?${params.toString()}`
+        );
 
         const data = await response.json();
 
-        // Return simple array of genre names (sorted alphabetically)
         const genres = (data.Items || [])
             .map(item => item.Name)
             .filter(name => name && name.trim() !== '')
             .sort((a, b) => a.localeCompare(b));
 
         res.json({ genres });
+
     } catch (err) {
-        console.error('Genres endpoint error:', err);
-        res.status(500).send('Backend error fetching genres');
+        console.error('Genres error:', err);
+
+        res.status(err.status || 500).json({
+            error: 'Failed to fetch genres from Jellyfin',
+            status: err.status || 500,
+            details: err.body || err.message
+        });
     }
 });
 
+
 /**
- * Image proxy with aggressive caching
- * Streams images from Jellyfin + strong browser/CDN caching
+ * GET /api/image/:id/:type
+ *
+ * Example:
+ *   /api/image/12345/Primary
  */
 app.get('/api/image/:id/:type', async (req, res) => {
     try {
         const { id, type } = req.params;
-        const imageUrl = `${JELLYFIN_URL}/Items/${id}/Images/${type}`;
-        const response = await fetch(imageUrl, {
-            headers: { 'X-Emby-Token': API_KEY }
-        });
 
-        if (!response.ok) {
-            console.error('Image fetch error:', response.status, await response.text());
-            return res.status(404).send('Image not found');
-        }
+        const imageUrl =
+            `/Items/${encodeURIComponent(id)}/Images/${encodeURIComponent(type)}`;
 
-        // Aggressive caching settings - perfect for movie/series posters
-        const cacheSeconds = 90 * 24 * 60 * 60; // 90 days
+        const response = await jellyfinFetch(imageUrl);
+
+        const contentType =
+            response.headers.get('content-type') || 'image/jpeg';
+
+        const cacheSeconds = 90 * 24 * 60 * 60;
+
         res.set({
-            'Content-Type': response.headers.get('content-type') || 'image/jpeg',
+            'Content-Type': contentType,
             'Cache-Control': `public, max-age=${cacheSeconds}, immutable`,
-            'Expires': new Date(Date.now() + cacheSeconds * 1000).toUTCString(),
+            'Expires': new Date(
+                Date.now() + cacheSeconds * 1000
+            ).toUTCString()
         });
 
-        // Stream the image directly (very memory efficient)
         response.body.pipe(res);
+
     } catch (err) {
-        console.error('Image proxy error:', err);
-        res.status(500).send('Image proxy error');
+        console.error('Image error:', err);
+
+        res.status(err.status || 404).send(
+            'Image not found'
+        );
     }
 });
 
+
+/**
+ * Simple health check.
+ */
+app.get('/api/health', async (req, res) => {
+    try {
+        const response = await jellyfinFetch('/System/Info');
+
+        const data = await response.json();
+
+        res.json({
+            ok: true,
+            jellyfinVersion: data.Version,
+            serverName: data.ServerName
+        });
+
+    } catch (err) {
+        res.status(err.status || 500).json({
+            ok: false,
+            error: err.message,
+            details: err.body || null
+        });
+    }
+});
+
+
 app.listen(PORT, () => {
-    console.log(`? Jellyfin backend running at http://localhost:${PORT}`);
+    console.log(
+        `Jellyfin backend running on http://localhost:${PORT}`
+    );
+
+    console.log(
+        `Jellyfin URL: ${JELLYFIN_URL}`
+    );
 });
