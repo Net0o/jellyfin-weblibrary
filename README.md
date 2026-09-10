@@ -91,3 +91,23 @@ Open in browser:
 ```
 http://YOUR_SERVER_IP/moviedb/
 ```
+
+
+
+testing:
+
+services:
+  jellyfin-weblibrary:
+    build: .
+    container_name: jellyfin-weblibrary
+
+    ports:
+      - "3002:3002"
+
+    environment:
+      JELLYFIN_URL: ${JELLYFIN_URL}
+      JELLYFIN_API_KEY: ${JELLYFIN_API_KEY}
+      TMDB_API_KEY: ${TMDB_API_KEY}
+      PORT: 3002
+
+    restart: unless-stopped
