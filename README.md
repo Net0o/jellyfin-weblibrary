@@ -8,7 +8,6 @@
 <b>Supports Jellyfin 12</b>
 
 <h3>Configuration steps:</h3>
-===================
 
 Docker
 ------
