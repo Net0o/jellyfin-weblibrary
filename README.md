@@ -1,101 +1,68 @@
 # jellyfin-weblibrary
-<h1><b>Website based library of your Jellyfin Movies / Series / New cards</b></h1>
+<h1><b>A simple web-based library for browsing your Jellyfin movies and series.</b></h1>
 
 <img width="1458" height="823" alt="image" src="https://github.com/user-attachments/assets/5fac61af-2722-48a4-a89d-4d85015b8278" />
 
-<h2>Comes with alphabetical search / search field / genre selection, IMDB & CSFD buttons</h2>
+<h2>Comes with alphabetical search / search field / genre filtering / IMDB & CSFD buttons / Jellyfin 12 API support</h2>
 
 Jellyfin-weblibrary is using Jellyfin & IMDB API key which you have to enter in the .env file
 
 <h3>Configuration steps:</h3>
 
-<h5>1. Backend configuration (.env)
+Jellyfin WebLibrary
+===================
 
-download all files, put them in respective folders and modify the .env file
+Docker
+------
 
-```
-nano /home/username/jellyfin-libr-backend/.env
-```
+The easiest way to run Jellyfin WebLibrary is with Docker.
 
-2. Install dependencies (once)
-```
-npm install
-```
-3. Test backend manually
-```
-node server.js
-```
-You should see something like:
-Jellyfin backend running on port 3002
+Environment variables
+---------------------
 
-Test in browser:
-```
-http://hostip:3002/api/items
-```
-If you see JSON → backend works ✅
+JELLYFIN_URL
+    URL of your Jellyfin server.
 
-Stop it:
-CTRL + C
+JELLYFIN_API_KEY
+    Jellyfin API key/token.
 
-4. Run backend as a service (recommended)
-   
-Create systemd service:
-```
-sudo nano /etc/systemd/system/jellyfin-moviedb.service
-```
-Paste:
+TMDB_API_KEY
+    TMDB API key.
 
-```[Unit]
+PORT
+    Web server port. Default: 3002.
 
-Description=Jellyfin MovieDB Backend
+Example
+-------
 
-After=network.target
+Create a .env file:
 
-[Service]
+JELLYFIN_URL=http://your-jellyfin-server:8096
+JELLYFIN_API_KEY=your_api_key
+TMDB_API_KEY=your_tmdb_api_key
+PORT=3002
 
-ExecStart=/usr/local/bin/node /home/username/jellyfin-libr-backend/server.js
+Then run:
 
-WorkingDirectory=/home/username/jellyfin-libr-backend
+docker compose up -d --build
 
-Restart=always
+The application will be available at:
 
-User=username
+http://YOUR_SERVER_IP:3002
 
-Environment=NODE_ENV=production
+Configuration
+-------------
 
+The Jellyfin URL and API keys are provided through environment
+variables and are never hardcoded into the application.
 
-[Install]
+License
+-------
 
-WantedBy=multi-user.target
-```
+AGPL-3.0
 
-5. Enable & start:
-```
-sudo systemctl daemon-reexec
-```
-```
-sudo systemctl daemon-reload
-```
-```
-sudo systemctl enable jellyfin-moviedb
-```
-```
-sudo systemctl start jellyfin-moviedb
-```
-Check:
-```
-sudo systemctl status jellyfin-moviedb
-```
-6. Access the site ✅
-Open in browser:
-```
-http://YOUR_SERVER_IP/moviedb/
-```
-
-
-
-testing:
-
+Docker-compose
+-------
 ```
 services:
   jellyfin-weblibrary:
