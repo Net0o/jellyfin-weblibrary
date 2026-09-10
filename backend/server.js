@@ -7,6 +7,8 @@ const cors = require('cors');
 const app = express();
 const PORT = process.env.PORT || 3002;
 
+const path = require('path');
+
 // Jellyfin configuration
 const JELLYFIN_URL = (process.env.JELLYFIN_URL || '').replace(/\/+$/, '');
 const API_KEY = process.env.JELLYFIN_API_KEY;
@@ -33,6 +35,14 @@ app.use(express.json());
 if (!API_KEY) {
     console.error('ERROR: JELLYFIN_API_KEY is not set in .env');
 }
+
+const frontendPath = path.join(__dirname, '..', 'frontend');
+
+app.use(express.static(frontendPath));
+
+app.get('*', (req, res) => {
+    res.sendFile(path.join(frontendPath, 'index.html'));
+});
 
 /**
  * Generic Jellyfin request helper
