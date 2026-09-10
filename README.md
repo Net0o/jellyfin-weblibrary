@@ -18,16 +18,16 @@ Environment variables
 ---------------------
 
 JELLYFIN_URL
-    URL of your Jellyfin server.
+        URL of your Jellyfin server.
 
 JELLYFIN_API_KEY
-    Jellyfin API key/token.
+        Jellyfin API key/token.
 
 TMDB_API_KEY
-    TMDB API key.
+        TMDB API key.
 
 PORT
-    Web server port. Default: 3002.
+        Web server port. Default: 3002.
 
 Example
 -------
