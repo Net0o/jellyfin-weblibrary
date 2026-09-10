@@ -3,6 +3,8 @@
 
 <img width="1458" height="823" alt="image" src="https://github.com/user-attachments/assets/5fac61af-2722-48a4-a89d-4d85015b8278" />
 
+
+
 <b>Supports Jellyfin 12</b>
 
 It provides a quick way to check and browse your Jellyfin library with:
