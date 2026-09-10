@@ -7,8 +7,6 @@
 
 <b>Supports Jellyfin 12</b>
 
-Jellyfin-weblibrary is using Jellyfin & IMDB API key which you have to enter in the .env file
-
 <h3>Configuration steps:</h3>
 
 Jellyfin WebLibrary
