@@ -3,67 +3,42 @@
 
 <img width="1458" height="823" alt="image" src="https://github.com/user-attachments/assets/5fac61af-2722-48a4-a89d-4d85015b8278" />
 
-<h2>Comes with alphabetical search / search field / genre filtering / IMDB & CSFD buttons</h2>
-
 <b>Supports Jellyfin 12</b>
 
-<h3>Configuration steps:</h3>
+It provides a quick way to check and browse your Jellyfin library with:
 
-Docker
-------
+* Alphabetical browsing
+* Search
+* Genre filtering
+* IMDb and CSFD links
+* Movie and series information
+* Jellyfin library integration
 
-The easiest way to run Jellyfin WebLibrary is with Docker.
+## Requirements
 
-Environment variables
----------------------
+* A running Jellyfin server
+* A Jellyfin API key
+* A TMDB API key
+* Docker
 
-JELLYFIN_URL
-        URL of your Jellyfin server.
+## Docker
 
-JELLYFIN_API_KEY
-        Jellyfin API key/token.
+The application runs as a single Docker container with the frontend and backend included.
 
-TMDB_API_KEY
-        TMDB API key.
+### Environment variables
 
-PORT
-        Web server port. Default: 3002.
+| Variable           | Description                       |
+| ------------------ | --------------------------------- |
+| `JELLYFIN_URL`     | URL of your Jellyfin server       |
+| `JELLYFIN_API_KEY` | Jellyfin API key                  |
+| `TMDB_API_KEY`     | TMDB API key                      |
+| `PORT`             | Web server port (default: `3002`) |
 
-Example
--------
+### Docker Compose
 
-Create a .env file:
+Example:
 
-JELLYFIN_URL=http://your-jellyfin-server:8096
-
-JELLYFIN_API_KEY=your_api_key
-
-TMDB_API_KEY=your_tmdb_api_key
-
-PORT=3002
-
-Then run:
-
-docker compose up -d --build
-
-The application will be available at:
-
-http://YOUR_SERVER_IP:3002
-
-Configuration
--------------
-
-The Jellyfin URL and API keys are provided through environment
-variables and are never hardcoded into the application.
-
-License
--------
-
-AGPL-3.0
-
-Docker-compose
--------
-```
+```yaml
 services:
   jellyfin-weblibrary:
     build:
@@ -73,13 +48,25 @@ services:
     container_name: jellyfin-weblibrary
 
     ports:
-      - "3004:3002"
+      - "3002:3002"
 
     environment:
-      JELLYFIN_URL: "http://your-Jellyfin-IP:8097"
-      JELLYFIN_API_KEY: "Your-Jellyfin-API-KEY"
-      TMDB_API_KEY: "Your-TMDB-API-KEY"
+      JELLYFIN_URL: "http://your-jellyfin-server-ip:8096"
+      JELLYFIN_API_KEY: "your-jellyfin-api-key"
+      TMDB_API_KEY: "your-tmdb-api-key"
       PORT: "3002"
 
     restart: unless-stopped
 ```
+
+After starting the container, open:
+
+```text
+http://YOUR_SERVER_IP:3002
+```
+
+The host port can be changed if `3002` is already in use. The application itself listens on port `3002` inside the container.
+
+## License
+
+AGPL-3.0
