@@ -69,17 +69,20 @@ Docker-compose
 ```
 services:
   jellyfin-weblibrary:
-    build: .
+    build:
+      context: https://github.com/Net0o/jellyfin-weblibrary.git
+      dockerfile: Dockerfile
+
     container_name: jellyfin-weblibrary
 
     ports:
-      - "3002:3002"
+      - "3004:3002"
 
     environment:
-      JELLYFIN_URL: ${JELLYFIN_URL}
-      JELLYFIN_API_KEY: ${JELLYFIN_API_KEY}
-      TMDB_API_KEY: ${TMDB_API_KEY}
-      PORT: 3002
+      JELLYFIN_URL: "http://your-Jellyfin-IP:8097"
+      JELLYFIN_API_KEY: "Your-Jellyfin-API-KEY"
+      TMDB_API_KEY: "Your-TMDB-API-KEY"
+      PORT: "3002"
 
     restart: unless-stopped
 ```
