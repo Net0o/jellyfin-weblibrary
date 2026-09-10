@@ -1,4 +1,4 @@
-# jellyfin-weblibrary
+# Jellyfin-WebLibrary
 <h1><b>A simple web-based library checker for your Jellyfin movies and series.</b></h1>
 
 <img width="1458" height="823" alt="image" src="https://github.com/user-attachments/assets/5fac61af-2722-48a4-a89d-4d85015b8278" />
@@ -8,8 +8,6 @@
 <b>Supports Jellyfin 12</b>
 
 <h3>Configuration steps:</h3>
-
-Jellyfin WebLibrary
 ===================
 
 Docker
