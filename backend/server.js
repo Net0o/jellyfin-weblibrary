@@ -40,10 +40,6 @@ const frontendPath = path.join(__dirname, '..', 'frontend');
 
 app.use(express.static(frontendPath));
 
-app.get('*', (req, res) => {
-    res.sendFile(path.join(frontendPath, 'index.html'));
-});
-
 /**
  * Generic Jellyfin request helper
  */
@@ -253,33 +249,29 @@ app.get('/api/image/:id/:type', async (req, res) => {
  * Simple health check.
  */
 app.get('/api/health', async (req, res) => {
-    try {
-        const response = await jellyfinFetch('/System/Info');
+  try {
+    const response = await jellyfinFetch('/System/Info');
+    const data = await response.json();
 
-        const data = await response.json();
-
-        res.json({
-            ok: true,
-            jellyfinVersion: data.Version,
-            serverName: data.ServerName
-        });
-
-    } catch (err) {
-        res.status(err.status || 500).json({
-            ok: false,
-            error: err.message,
-            details: err.body || null
-        });
-    }
+    res.json({
+      ok: true,
+      jellyfinVersion: data.Version,
+      serverName: data.ServerName
+    });
+  } catch (err) {
+    res.status(err.status || 500).json({
+      ok: false,
+      error: err.message,
+      details: err.body || null
+    });
+  }
 });
 
+app.get('*', (req, res) => {
+  res.sendFile(path.join(frontendPath, 'index.html'));
+});
 
 app.listen(PORT, () => {
-    console.log(
-        `Jellyfin backend running on http://localhost:${PORT}`
-    );
-
-    console.log(
-        `Jellyfin URL: ${JELLYFIN_URL}`
-    );
+  console.log(`Jellyfin backend running on http://localhost:${PORT}`);
+  console.log(`Jellyfin URL: ${JELLYFIN_URL}`);
 });
