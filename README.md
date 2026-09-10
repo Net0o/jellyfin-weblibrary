@@ -3,7 +3,9 @@
 
 <img width="1458" height="823" alt="image" src="https://github.com/user-attachments/assets/5fac61af-2722-48a4-a89d-4d85015b8278" />
 
-<h2>Comes with alphabetical search / search field / genre filtering / IMDB & CSFD buttons / Jellyfin 12 API support</h2>
+<h2>Comes with alphabetical search / search field / genre filtering / IMDB & CSFD buttons</h2>
+
+<h2>Supports Jellyfin 12</h2>
 
 Jellyfin-weblibrary is using Jellyfin & IMDB API key which you have to enter in the .env file
 
