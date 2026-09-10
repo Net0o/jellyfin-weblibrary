@@ -40,9 +40,7 @@ Example:
 ```yaml
 services:
   jellyfin-weblibrary:
-    build:
-      context: https://github.com/Net0o/jellyfin-weblibrary.git
-      dockerfile: Dockerfile
+    image: ghcr.io/net0o/jellyfin-weblibrary:latest
 
     container_name: jellyfin-weblibrary
 
