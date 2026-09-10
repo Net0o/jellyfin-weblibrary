@@ -5,7 +5,7 @@
 
 <h2>Comes with alphabetical search / search field / genre filtering / IMDB & CSFD buttons</h2>
 
-<h2>Supports Jellyfin 12</h2>
+<b>Supports Jellyfin 12</b>
 
 Jellyfin-weblibrary is using Jellyfin & IMDB API key which you have to enter in the .env file
 
