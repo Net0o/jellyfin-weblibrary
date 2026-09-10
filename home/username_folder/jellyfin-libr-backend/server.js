@@ -5,11 +5,21 @@ const fetch = require('node-fetch');
 const cors = require('cors');
 
 const app = express();
-const PORT = 3002;
+const PORT = process.env.PORT || 3002;
 
 // Jellyfin configuration
-const JELLYFIN_URL = (process.env.JELLYFIN_URL || 'http://192.168.0.36:8097').replace(/\/+$/, '');
+const JELLYFIN_URL = (process.env.JELLYFIN_URL || '').replace(/\/+$/, '');
 const API_KEY = process.env.JELLYFIN_API_KEY;
+
+if (!JELLYFIN_URL) {
+    console.error('ERROR: JELLYFIN_URL is not set.');
+    process.exit(1);
+}
+
+if (!API_KEY) {
+    console.error('ERROR: JELLYFIN_API_KEY is not set.');
+    process.exit(1);
+}
 
 // Jellyfin 12 authentication
 const JELLYFIN_HEADERS = {
