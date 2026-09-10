@@ -37,9 +37,12 @@ Example
 
 Create a .env file:
 
-JELLYFIN_URL=http://your-jellyfin-server:8096 
+JELLYFIN_URL=http://your-jellyfin-server:8096
+
 JELLYFIN_API_KEY=your_api_key
+
 TMDB_API_KEY=your_tmdb_api_key
+
 PORT=3002
 
 Then run:
