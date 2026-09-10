@@ -96,6 +96,7 @@ http://YOUR_SERVER_IP/moviedb/
 
 testing:
 
+```
 services:
   jellyfin-weblibrary:
     build: .
@@ -111,3 +112,4 @@ services:
       PORT: 3002
 
     restart: unless-stopped
+```
