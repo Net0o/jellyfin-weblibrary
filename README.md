@@ -1,5 +1,5 @@
 # jellyfin-weblibrary
-<h1><b>A simple web-based library for browsing your Jellyfin movies and series.</b></h1>
+<h1><b>A simple web-based library checker for your Jellyfin movies and series.</b></h1>
 
 <img width="1458" height="823" alt="image" src="https://github.com/user-attachments/assets/5fac61af-2722-48a4-a89d-4d85015b8278" />
 
